@@ -1,34 +1,59 @@
-import streamlit as st
-from Backend.llm import get_llm_response
-from Database.database import retrieve_sql_query
-import os, sys
-
+import os, sys, streamlit as st, pandas as pd
 sys.path.append(os.path.abspath(os.path.join(os.path.dirname(__file__), "..")))
 
+from Backend.llm import get_llm_response
+from Database.database import retrieve_sql_query
+
+
 # Streamlit app setup
-st.set_page_config(page_title="Retrieve SQL Queries")
+st.set_page_config(page_title="Retrieve SQL Queries",layout='wide')
 st.header("GENAI APP To Retrieve SQL Data")
 
 # User input
 query = st.text_input("Input: ", key="input")
 
 # Submit button
-submit = st.button("Ask the question")
+submit = st.button("Generate")
 
 # Process query on submit
 if submit:
+    if not query.strip():
+        st.warning("Please enter a query.")
+        st.stop()
     # Get SQL query from LLM
-    sql_query = get_llm_response(query)
-    print(f"Generated SQL Query: {sql_query}")
+    try:
+        result = get_llm_response(query)
+    except Exception as e:
+        st.error(f"LLM error: {e}")
+        st.stop()
+    
+    sql_queries = result if isinstance(result, list) else [result]
+    
+    print(f"Generated SQL Query: {sql_queries}")
 
-    # Retrieve data from database
-    result = retrieve_sql_query(sql_query.query, db=os.getenv("DB_NAME"))
+    db_name = os.getenv("DB_NAME")
+    
+    if not db_name:
+        st.info("Environment variable DB_NAME is not set. Using default DB configuration (if any).")
 
-    # Display results
-    st.subheader("Response is:")
-    if result:
-        for row in result:
-            st.write(row)
-    else:
-        st.write("No results found.")
+    st.subheader("Generated SQL & Results:")
+    
+    for i, q in enumerate(sql_queries, start=1):
+        # q is a Pydantic Query model: has .query and .category
+        st.markdown(f"#### Step {i} — Operation: `{q.category}`")
+        st.code(q.query, language="sql")
+
+        try:
+            rows = retrieve_sql_query(q.query, db=db_name)
+        except Exception as e:
+            st.error(f"Execution error: {e}")
+            continue
+        
+        if not rows:
+            st.write("_No results returned._")
+            continue
+        
+        df = pd.DataFrame(rows)          
+        st.dataframe(df, use_container_width=True)
+
         
