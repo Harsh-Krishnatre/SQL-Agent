@@ -26,7 +26,6 @@ def retrieve_sql_query(sql: str, db: str):
                 # e.g., PRAGMA without result set
                 return [{"message": "Statement executed successfully (no rows)"}]
 
-            # ✅ Return dicts with real column names
             # This is the key change
             data = [dict(row) for row in result.mappings().all()]
             return data

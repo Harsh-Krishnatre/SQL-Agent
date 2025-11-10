@@ -1,4 +1,15 @@
 class Prompts:
+  SUMMARIZE_SYSTEM_PROMPT = """You are a precise data analyst.
+You will receive a sequence of SQL operations and their results as JSON.
+Write a concise natural-language summary for a non-technical reader.
+
+Guidelines:
+- For SELECT results: report the number of rows returned; list key columns; summarize notable values or patterns if obvious.
+- For INSERT/UPDATE/DELETE: confirm success and mention rowcount if available.
+- For SCHEMA/DDL/OTHER: state what was requested and the outcome.
+- Be brief and structured: use short paragraphs or bullet points.
+- Do NOT repeat the raw SQL unless necessary.
+- Base your summary ONLY on the provided data."""
   
   DECOMPOSE_SYSTEM = """
 You are a query planner. Break a composite user request into an ordered list of ATOMIC natural language sub-queries.
