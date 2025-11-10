@@ -1,0 +1,124 @@
+# =====================================
+# Python Project .gitignore
+# =====================================
+
+# --- Python cache & bytecode ---
+__pycache__/
+*.py[cod]
+*$py.class
+
+# --- Virtual environment directories ---
+.venv/
+venv/
+env/
+ENV/
+pip-wheel-metadata/
+.venv.bak/
+
+# --- Distribution / packaging ---
+build/
+dist/
+*.egg-info/
+.eggs/
+*.egg
+MANIFEST
+
+# --- Logs & debug files ---
+*.log
+*.out
+*.err
+logs/
+debug.log
+
+# --- Environment variables ---
+.env
+.env.local
+.env.*.local
+*.env
+secrets.json
+config.yaml
+config.yml
+
+# --- IDE & editor files ---
+.vscode/
+.idea/
+*.swp
+*.swo
+*.bak
+*.tmp
+
+# --- OS-generated files ---
+.DS_Store
+Thumbs.db
+Desktop.ini
+
+# --- Jupyter & notebooks ---
+.ipynb_checkpoints/
+*.ipynb_checkpoint
+
+# --- Unit test / coverage ---
+htmlcov/
+.tox/
+.nox/
+.coverage
+.coverage.*
+.cache
+nosetests.xml
+coverage.xml
+*.cover
+*.py,cover
+pytest_cache/
+test-results/
+
+# --- Temporary & runtime files ---
+*.pid
+*.seed
+*.csv~
+*.sqlite3
+*.db
+data/tmp/
+tmp/
+__temp__/
+
+# --- Streamlit specific ---
+.streamlit/config.toml
+.streamlit/secrets.toml
+
+# --- Hugging Face / LangChain ---
+huggingface_cache/
+.huggingface/
+langchain_logs/
+langchain.db
+openai.log
+hf_model_cache/
+
+# --- VSCode local history ---
+.history/
+.vscode/settings.json
+
+# --- PyInstaller ---
+*.spec
+
+# --- MyPy / Pyre / Pylint ---
+.mypy_cache/
+.pyre/
+.pytype/
+pylint.log
+
+# --- Profiling ---
+.prof
+*.lprof
+*.profile
+*.profraw
+
+# --- SQL / Database ---
+*.sqlite
+*.sqlite3
+*.db
+.db/
+sql_logs/
+
+# --- Others (custom) ---
+uploads/
+__backup__/
+__archive__/
