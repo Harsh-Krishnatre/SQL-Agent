@@ -1,5 +1,5 @@
 import json
-from langchain_huggingface import ChatHuggingFace, HuggingFaceEndpoint
+from langchain_google_genai import ChatGoogleGenerativeAI
 from dotenv import load_dotenv
 
 load_dotenv()
@@ -28,20 +28,11 @@ def extract_json(text: str) -> dict:
 
 def get_chat_model():
     """
-    Initializes and returns a ChatHuggingFace model connected to a Hugging Face Endpoint.
-
-    This function sets up a connection to a specified Llama-3.1-8B-Instruct model
-    on the Hugging Face platform, configuring it with a temperature of 0.3 and
-    a maximum of 1024 new tokens for generation.
+    Initializes and returns a ChatGoogleGenerativeAI model instance.
 
     Returns:
-        ChatHuggingFace: An initialized ChatHuggingFace model instance.
+        ChatGoogleGenerativeAI: An instance of the Gemini 2.5 Flash model.
     """
-
-    endpoint = HuggingFaceEndpoint(
-        repo_id="meta-llama/Llama-3.1-8B-Instruct",
-        temperature=0.3,
-        max_new_tokens=1024,
-    )
-    chat_model = ChatHuggingFace(llm=endpoint, verbose=True)
+    
+    chat_model = ChatGoogleGenerativeAI(model="gemini-2.5-flash")
     return chat_model

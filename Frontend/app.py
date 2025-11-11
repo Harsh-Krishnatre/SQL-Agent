@@ -30,6 +30,8 @@ if submit:
     
     sql_queries = result if isinstance(result, list) else [result]
     
+    print(sql_queries)
+    
     db_name = os.getenv("DB_NAME")
     
     if not db_name:
@@ -40,12 +42,30 @@ if submit:
     steps_summary = []
     for i, q in enumerate(sql_queries, start=1):
         # q is a Pydantic Query model: has .query and .category
-        st.markdown(f"#### Step {i} — ")
+        st.markdown(f"#### Step {i} — `{q.category}` Operation")
+        st.code(q.query, language="sql")
+
+        # --- Confirmation for Destructive Operations ---
+        destructive_categories = ["DELETE", "UPDATE", "INSERT", "DDL"]
+        is_destructive = q.category in destructive_categories
+        proceed = True
+
+        if is_destructive:
+            st.warning(f"**Warning:** This is a potentially destructive `{q.category}` operation.")
+            # Use a unique key for the button inside the loop
+            if not st.button(f"Confirm and Execute Step {i}", key=f"confirm_{i}"):
+                proceed = False
+        
+        if not proceed:
+            st.info("Execution skipped by user.")
+            continue # Move to the next query in the list
+        # --- End of Confirmation Logic ---
+
         try:
             rows = retrieve_sql_query(q.query, db=db_name)
         except Exception as e:
-            st.error(f"Execution error: {e}")
-            rews = []
+            st.error(f"Execution error on Step {i}: {e}")
+            rows = []
         
         if rows:
             # Prefer list-of-dicts for nice headers

@@ -36,16 +36,8 @@ Only return the JSON for the schema with the single `category` field.
 """
 
   SQL_GENERATION_PROMPT = """
-  You are an expert in converting English questions to SQL query!
-  The SQL database has a table named STUDENTS and has the following columns - NAME, CLASS, SECTION, MARKS.
-
-  For example:
-  Example 1 - How many entries of records are present?
-  SQL command will be something like this: SELECT COUNT(*) FROM STUDENTS;
-
-  Example 2 - Tell me all the students studying in Data Science class.
-  SQL command will be something like this: SELECT * FROM STUDENTS WHERE CLASS = 'Data Science';
-
+  Generate a SQL query that answers the user's question based on the provided schema. For example, a request for "How many entries of records are present?" might result in a query like `SELECT COUNT(*) FROM table_name;`.
+  
   Note: The SQL code should not have ``` in the beginning or end and the word 'sql' in the output.
   """
 
@@ -62,10 +54,8 @@ Only return the JSON for the schema with the single `category` field.
   Return ONLY a valid JSON object: {"query": "INSERT INTO...", "category": "INSERT"}
   
   For example:
-  Example 1 - Insert a new student named 'John Doe' in class '10' section 'A' with marks '95'.
-  SQL command will be something like this: INSERT INTO STUDENTS (NAME, CLASS, SECTION, MARKS) VALUES ('John Doe', '10', 'A', 95);
-
-  Note: The SQL code should not have ``` in the beginning or end and the word 'sql' in the output.
+  A request like "Insert a new user named 'John Doe' with email 'john.doe@email.com'" should generate a query like:
+  `INSERT INTO users (name, email) VALUES ('John Doe', 'john.doe@email.com');`
   """
 
   SQL_UPDATION_PROMPT = """
@@ -80,13 +70,11 @@ CRITICAL RULES:
 6. Be cautious with column names like ROLL, ID, or STUDENT_ID — match them exactly from the schema.
 7. Ensure proper SQL syntax and quotation marks around string values.
 
-Return ONLY a valid JSON object: {"query": "UPDATE STUDENTS SET ... WHERE ...;", "category": "UPDATE"}
+Return ONLY a valid JSON object: {"query": "UPDATE table_name SET ... WHERE ...;", "category": "UPDATE"}
 
 For example:
-Example 1 - Update the marks of the student named 'John Doe' to '98'.
-SQL command will be something like this: UPDATE STUDENTS SET MARKS = 98 WHERE NAME = 'John Doe';
-
-Note: The SQL code should not have ``` in the beginning or end and the word 'sql' in the output.
+A request like "Update the status for order ID 123 to 'shipped'" should generate a query like:
+`UPDATE orders SET status = 'shipped' WHERE order_id = 123;`
 """
   SQL_DELETION_PROMPT = """
   You are a SQL expert. Generate a DELETE statement based on the user's request.
@@ -103,10 +91,8 @@ Note: The SQL code should not have ``` in the beginning or end and the word 'sql
   Return ONLY a valid JSON object: {"query": "DELETE FROM ... WHERE ...;", "category": "DELETE"}
 
   For example:
-  Example 1 - Delete the record of the student named 'John Doe'.
-  SQL command will be something like this: DELETE FROM STUDENTS WHERE NAME = 'John Doe';
-
-  Note: The SQL code should not have ``` in the beginning or end and the word 'sql' in the output.
+  A request like "Delete the user with email 'john.doe@email.com'" should generate a query like:
+  `DELETE FROM users WHERE email = 'john.doe@email.com';`
   """
 
 
@@ -120,13 +106,11 @@ CRITICAL RULES:
 4. Do not attempt to modify or delete data — this category is for schema information only.
 5. Ensure correct SQL syntax for the selected dialect (default to SQLite syntax for PRAGMA if unspecified).
 
-Return ONLY a valid JSON object: {"query": "PRAGMA table_info(STUDENTS);", "category": "SCHEMA"}
+Return ONLY a valid JSON object: {"query": "PRAGMA table_info(table_name);", "category": "SCHEMA"}
 
 For example:
-Example 1 - What are the columns in the STUDENTS table?
-SQL command will be something like this: PRAGMA table_info(STUDENTS);
-
-Note: The SQL code should not have ``` in the beginning or end and the word 'sql' in the output.
+A request like "What are the columns in the products table?" should generate a query like:
+`PRAGMA table_info(products);` (for SQLite)
 """
 
   PROMPTS = {

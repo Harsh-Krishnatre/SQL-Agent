@@ -64,7 +64,9 @@ def summarize_nlg(steps: List[Dict[str, Any]]) -> str:
       "note": "rows_sample truncated to at most 20 rows"
     })
     
-    chat = get_chat_model()
-    msgs = _summarize_prompt(payload)
-    resp = chat.invoke(msgs)
-    return getattr(resp, "content", str(resp))
+  # The summary should be generated AFTER all steps are processed.
+  # This was a bug where it returned after the first step.
+  chat = get_chat_model()
+  msgs = _summarize_prompt(payload)
+  resp = chat.invoke(msgs)
+  return getattr(resp, "content", str(resp))
